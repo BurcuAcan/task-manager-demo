@@ -1,5 +1,5 @@
 {
-  "name": "my-turborepo",
+  "name": "shadcn-task-v4",
   "private": true,
   "scripts": {
     "build": "turbo run build",
