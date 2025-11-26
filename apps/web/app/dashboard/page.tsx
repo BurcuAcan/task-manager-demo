@@ -15,6 +15,7 @@ export default function DashboardPage() {
   const router = useRouter();
   const { addTask, getTasksByStatus, statistics } = useTasks();
 
+  
   useEffect(() => {
     if (!isAuthenticated) {
       router.push(ROUTES.LOGIN);
