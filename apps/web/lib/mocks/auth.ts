@@ -1,6 +1,8 @@
-import { User, AuthResponse } from "@/types";
+import { User, AuthResponse } from "@/modules/(auth)/types/auth.types";
 
-export const mockUsers = [
+const USERS_STORAGE_KEY = "all_users";
+
+const initialMockUsers = [
   {
     id: 1,
     username: "admin",
@@ -21,13 +23,39 @@ export const mockUsers = [
   },
 ];
 
+if (typeof window !== "undefined") {
+  const storedUsers = localStorage.getItem(USERS_STORAGE_KEY);
+  if (!storedUsers) {
+    localStorage.setItem(USERS_STORAGE_KEY, JSON.stringify(initialMockUsers));
+  }
+}
+
+export const getAllUsers = (): Array<{ id: number; username: string; email: string; password: string }> => {
+  if (typeof window === "undefined") return initialMockUsers;
+  
+  const storedUsers = localStorage.getItem(USERS_STORAGE_KEY);
+  return storedUsers ? JSON.parse(storedUsers) : initialMockUsers;
+};
+
+export const getAllTeamMembers = (): Array<{ id: number; username: string; email: string }> => {
+  const users = getAllUsers();
+  return users.map(({ password, ...user }) => user);
+};
+
+const saveUsers = (users: Array<{ id: number; username: string; email: string; password: string }>) => {
+  if (typeof window !== "undefined") {
+    localStorage.setItem(USERS_STORAGE_KEY, JSON.stringify(users));
+  }
+};
+
 export const mockLogin = async (
   email: string,
   password: string
 ): Promise<AuthResponse> => {
   await new Promise((resolve) => setTimeout(resolve, 1000));
 
-  const user = mockUsers.find(
+  const users = getAllUsers();
+  const user = users.find(
     (u) => u.email === email && u.password === password
   );
 
@@ -46,19 +74,21 @@ export const mockRegister = async (
 ): Promise<AuthResponse> => {
   await new Promise((resolve) => setTimeout(resolve, 1000));
 
-  const existingUser = mockUsers.find((u) => u.email === email);
+  const users = getAllUsers();
+  const existingUser = users.find((u) => u.email === email);
   if (existingUser) {
     return { success: false, error: "Email already exists" };
   }
 
   const newUser = {
-    id: mockUsers.length + 1,
+    id: users.length + 1,
     username,
     email,
     password,
   };
 
-  mockUsers.push(newUser);
+  users.push(newUser);
+  saveUsers(users);
 
   const { password: _, ...userWithoutPassword } = newUser;
   return { success: true, user: userWithoutPassword };

@@ -1,14 +1,13 @@
 "use client";
 
 import React, { createContext, useContext, useEffect, useState } from "react";
-import { User, AuthContextType } from "@/types";
+import { User, AuthContextType } from "@/modules/(auth)/types/auth.types";
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
 
-  // localStorage'dan kullanıcı bilgisini yükle
   useEffect(() => {
     const storedUser = localStorage.getItem("user");
     if (storedUser) {
