@@ -1,7 +1,10 @@
-"use client";
-
 import { DashboardContainer } from "@/modules/dashboard/containers/dashboard-container";
+import { AuthGuard } from "@/components/auth";
 
 export default function DashboardPage() {
-  return <DashboardContainer />;
+  return (
+    <AuthGuard requireAuth>
+      <DashboardContainer />
+    </AuthGuard>
+  );
 }
