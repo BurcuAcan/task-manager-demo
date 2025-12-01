@@ -9,6 +9,7 @@ export interface AuthContextType {
   login: (user: User) => void;
   logout: () => void;
   isAuthenticated: boolean;
+  isLoading: boolean;
 }
 
 export interface AuthResponse {
